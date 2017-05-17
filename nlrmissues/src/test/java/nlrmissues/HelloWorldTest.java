@@ -9,8 +9,8 @@ public class HelloWorldTest {
 @Test
 public void sumTest()
 {
-	int r=15;
-	assertEquals(r,new HelloWorld().sum(6, 9));
+	int r=20;
+	assertEquals(r,new HelloWorld().sum(10, 10));
     
 	
 }
