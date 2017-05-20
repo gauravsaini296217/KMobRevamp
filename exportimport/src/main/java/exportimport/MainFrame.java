@@ -5,10 +5,20 @@ import java.awt.EventQueue;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -25,6 +35,8 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import model.ExportBookDetails;
+
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
@@ -35,6 +47,9 @@ public class MainFrame extends JFrame {
 	private JComboBox<String> databases, m_databases;
 	private Connection ipcon, metacon;
 	private JComboBox<String> ipUsers, metaUsers;
+	PreparedStatement ps, ps1;
+	ExportBookDetails ebDetails;
+	String newjid, newcid;
 	
 	/**
 	 * Launch the application.
@@ -197,8 +212,34 @@ public class MainFrame extends JFrame {
 			         else
 			     {
 			      
-			     System.out.println("F_Jid:"+rsp2.getString(6)+" ,Bookno:"+rsp2.getString(7));    
+			     System.out.println("F_Jid:"+rsp2.getString(6)+" ,Bookno:"+rsp2.getString(7));   
+			     
+			     ps1=ipcon.prepareStatement("select count(distinct filename) from tbimagetrans where vqcby is not null and dqcby is not null and status='F' and jid='"+rsp2.getInt(6)+"' and bookno='"+rsp2.getInt(7)+"'");
+			     ResultSet rs=ps1.executeQuery();
+			     if(rs.next())
+			     {
+			     System.out.println(rs.getString(1));	 
+			     if(rs.getInt(1)==rsp2.getInt(8))
+			     {
+			     ebDetails=new ExportBookDetails();    
+			     ebDetails.setTalukaid(rsp2.getInt(1));   
+			     ebDetails.setVillageid(rsp2.getInt(2));
+			     ebDetails.setEtitle(rsp2.getString(3));
+			     ebDetails.setDocid(rsp2.getInt(4));
+			     ebDetails.setEdesc(rsp2.getString(5));
+			     ebDetails.setJid(rsp2.getInt(6));
+			     ebDetails.setBookno(rsp2.getInt(7));
+			     ebDetails.setActualpages(rsp2.getInt(8));
+			     ebDetails.setCid(rsp2.getInt(9));
+			     Export(ebDetails);
+			     
 			     }
+			     }
+			     
+			     JOptionPane.showMessageDialog(null,"Successfully Imported", "NLRMEI", JOptionPane.INFORMATION_MESSAGE);
+			     
+			     }
+			     
 			     }
 				}catch(Exception e2)
 				{
@@ -373,4 +414,378 @@ public class MainFrame extends JFrame {
 		panel.setLayout(gl_panel);
 		contentPane.setLayout(gl_contentPane);
 	}
+	
+	public void Export(ExportBookDetails ebDetails)
+	 { try{
+		 System.out.println(ebDetails.toString());
+	     String stmt;
+	   //  filenames=new ArrayList();
+	     DateFormat dateFormat=new SimpleDateFormat("ddMMyyyy");
+	     DateFormat dateFormat1=new SimpleDateFormat("yyyy-MM-dd");
+	     FileWriter fileWriter;
+	     BufferedWriter bw;
+	     FileReader fr;
+	     BufferedReader br;
+	     String filename;
+	     int count=0,c1=0,c2=0,c3=0,c4=0,imgcount=0;
+	     String line="";
+	     int seqexp,serialno;
+	    // System.out.println("List size:"+ebDetailsList.size());
+	                
+	        c1=0;c2=0;c3=0;c4=0;    
+	        ps=metacon.prepareStatement("select * from tbjacketm where refjid='"+ebDetails.getJid()+"'");
+	        ResultSet rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            c1=1;
+	        }    
+	        ps=metacon.prepareStatement("select * from tbjacketd where refjid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            c2=1;
+	        }
+	        ps=metacon.prepareStatement("select * from tbimgworkassign where refjid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            c3=1;
+	        }
+	        ps=metacon.prepareStatement("select count(distinct filename) from tbimagetrans where refjid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            if(rs.getInt(1)==ebDetails.getActualpages())
+	            {
+	            c4=1;
+	            }
+	            
+	        }
+	        
+	        if(c2==0 && c3==0 && c4==0)
+	        {
+	        System.out.println("For Export:"+ebDetails.toString());    
+	        filename="JW"+dateFormat.format(new Date())+formattext(String.valueOf(ebDetails.getBookno()))+String.valueOf(ebDetails.getJid())+"."+formattext(String.valueOf(ebDetails.getCid()));    
+	        fileWriter=new FileWriter(filename);    
+	        bw=new BufferedWriter(fileWriter);
+	        stmt="S|"+ebDetails.getCid()+"|"+ebDetails.getJid()+"|"+ebDetails.getBookno()+"|"+ebDetails.getTalukaid();
+	        if(hash(stmt).length()==32)
+	        {
+	        stmt=hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==31)
+	        {
+	        stmt="0"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==30)
+	        {
+	        stmt="00"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==29)
+	        {
+	        stmt="000"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==28)
+	        {
+	        stmt="0000"+hash(stmt)+"|"+stmt;
+	        }
+	        System.out.println(stmt);
+	        bw.write(stmt);
+	        bw.newLine();
+	        stmt="D|insert into tbjacketm(jid,cid, ofcid, docid, books, issuedby, recvby, recvdt, status, stateid, districtid, talukaid, villageid,wvillageid,createdby, datecreated,refjid,refcid) values (NEWJID,NEWCID,";
+	        ps=ipcon.prepareStatement("select ofcid, docid, books, issuedby, recvby, recvdt, status, stateid, districtid, talukaid, villageid,wvillageid,createdby, datecreated,jid,cid from tbjacketm where jid='"+ebDetails.getJid()+"' and cid='"+ebDetails.getCid()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            stmt=stmt+rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+",$"+rs.getString(4)+"$,$"+rs.getString(5)+"$,$"+rs.getString(6)+"$,$"+rs.getString(7)+"$,"+rs.getString(8)+","+rs.getString(9)+","+rs.getString(10)+","+rs.getString(11)+","+rs.getString(12)+",$"+rs.getString(13)+"$,$"+rs.getString(14)+"$,"+rs.getString(15)+","+rs.getString(16)+");";
+	        }
+	        if(hash(stmt).length()==32)
+	        {
+	        stmt=hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==31)
+	        {
+	        stmt="0"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==30)
+	        {
+	        stmt="00"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==29)
+	        {
+	        stmt="000"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==28)
+	        {
+	        stmt="0000"+hash(stmt)+"|"+stmt;
+	        }
+	        System.out.println(stmt);
+	        bw.write(stmt);
+	        bw.newLine();
+	        ps=ipcon.prepareStatement("update tbjacketd set readyby='"+ipUsers.getSelectedItem()+"' , readydate='"+dateFormat1.format(new Date())+"' , expby='"+ipUsers.getSelectedItem()+"' , expdate='"+dateFormat1.format(new Date())+"' where jid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        ps.execute();
+	        stmt="D|insert into tbjacketd(jid, cid, bookno, deptpages, actualpages, remark, room, rac, shelf, rumaal,refjid,refcid, readyby, readydate,expby,expdate,pendingpages,status) values (NEWJID,NEWCID,";
+	        ps=ipcon.prepareStatement("select bookno, deptpages, actualpages, quote_nullable(remark), coalesce(room,0), coalesce(rac,0), coalesce(shelf,0), coalesce(rumaal,0),jid,cid, readyby, readydate,expby,expdate,pendingpages,status from tbjacketd where jid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            
+	            stmt=stmt+rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4)+",$"+rs.getString(5)+"$,$"+rs.getString(6)+"$,$"+rs.getString(7)+"$,$"+rs.getString(8)+"$,"+rs.getString(9)+","+rs.getString(10)+",$"+rs.getString(11)+"$,$"+rs.getString(12)+"$,$"+rs.getString(13)+"$,$"+rs.getString(14)+"$,$"+rs.getString(15)+"$,$"+rs.getString(16)+"$);";    
+	            
+	            
+	            
+	        }
+	        if(hash(stmt).length()==32)
+	        {
+	        stmt=hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==31)
+	        {
+	        stmt="0"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==30)
+	        {
+	        stmt="00"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==29)
+	        {
+	        stmt="000"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==28)
+	        {
+	        stmt="0000"+hash(stmt)+"|"+stmt;
+	        }
+	        System.out.println(stmt);
+	        bw.write(stmt);
+	        bw.newLine();
+	        stmt="D|insert into tbimgworkassign (jid,cid, bookno, assignto, assigndate, assigntarget, pendings,bkstatus,refjid,refcid) values (NEWJID,NEWCID,";
+	        ps=ipcon.prepareStatement("select bookno, assignto, assigndate, assigntarget, pendings,bkstatus,jid,cid from tbimgworkassign where jid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        if(rs.next())
+	        {
+	            stmt=stmt+rs.getString(1)+",$"+rs.getString(2)+"$,$"+rs.getString(3)+"$,"+rs.getString(4)+","+rs.getString(5)+",$"+rs.getString(6)+"$,"+rs.getString(7)+","+rs.getString(8)+");";
+	        }
+	        if(hash(stmt).length()==32)
+	        {
+	        stmt=hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==31)
+	        {
+	        stmt="0"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==30)
+	        {
+	        stmt="00"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==29)
+	        {
+	        stmt="000"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==28)
+	        {
+	        stmt="0000"+hash(stmt)+"|"+stmt;
+	        }
+	        System.out.println(stmt);
+	        bw.write(stmt);
+	        bw.newLine();
+	        count=0;
+	        imgcount=0;
+	        ps=ipcon.prepareStatement("select imgid,ofcid, docid, villageid, createdby, datecreated, filename,replace(repository,E'\\\\','#'), fileencrypt, vqcby, vqcdate, dqcby, dqcdate,status, bookno, pageno, imgorgname,replace(replace(replace(imgorgrepository,E'\\\\','#'),'$',''),'''',''), jid, cid from tbimagetrans where jid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        rs=ps.executeQuery();
+	        while(rs.next())
+	        {
+	            String imgid="";
+	            PreparedStatement pspy=metacon.prepareStatement("SELECT nextval('seqimgid')");
+	            ResultSet rspy=pspy.executeQuery();
+	            while(rspy.next()){
+	            imgid=rspy.getString(1);
+	            } 
+	           
+	            stmt="D|insert into tbimagetrans(jid, cid,imgid,ofcid, docid, villageid, createdby, datecreated, filename,repository, fileencrypt, vqcby, vqcdate, dqcby, dqcdate,status, bookno, pageno, imgorgname,imgorgrepository, refjid, refcid) values (NEWJID,NEWCID,";
+	            stmt=stmt+imgid+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4)+",$"+rs.getString(5)+"$,$"+rs.getString(6)+"$,$"+rs.getString(7)+"$,$"+rs.getString(8)+"$,$"+rs.getString(9)+"$,$"+rs.getString(10)+"$,$"+rs.getString(11)+"$,$"+rs.getString(12)+"$,$"+rs.getString(13)+"$,$"+rs.getString(14)+"$,"+rs.getString(15)+","+rs.getString(16)+",$"+rs.getString(17)+"$,$"+rs.getString(18) +"$,"+rs.getString(19)+","+rs.getString(20)+");";
+	            if(hash(stmt).length()==32)
+	        {
+	        stmt=hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==31)
+	        {
+	        stmt="0"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==30)
+	        {
+	        stmt="00"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==29)
+	        {
+	        stmt="000"+hash(stmt)+"|"+stmt;
+	        }
+	        else if(hash(stmt).length()==28)
+	        {
+	        stmt="0000"+hash(stmt)+"|"+stmt;
+	        }
+	            System.out.println(stmt);
+	            bw.write(stmt);
+	            bw.newLine();
+	            count++;
+	        }
+	        imgcount=count;
+	        count=count+3;
+	        stmt="E|"+String.valueOf(count);
+	        stmt=hash(stmt)+"|"+stmt;
+	        System.out.println(stmt);
+	        bw.write(stmt);
+	        bw.close();
+	     //   filenames.add(filename);
+	        ps=ipcon.prepareStatement("update tbjacketd set readyby='"+ipUsers.getSelectedItem()+"' , readydate='"+dateFormat1.format(new Date())+"' , expby='"+ipUsers.getSelectedItem()+"' , expdate='"+dateFormat1.format(new Date())+"' where jid='"+ebDetails.getJid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        ps.execute();
+	        fr=new FileReader(filename);
+	        br=new BufferedReader(fr);
+	        line="";
+	        seqexp=0;
+	        PreparedStatement pspy=ipcon.prepareStatement("SELECT nextval('seqexp')");
+	        ResultSet rspy=pspy.executeQuery();
+	        while(rspy.next()){
+	        seqexp=Integer.parseInt(rspy.getString(1));
+	        }
+	        serialno=1;
+	        while((line=br.readLine())!=null)
+	        {
+	        String bkmd5=line.split("\\|")[0];
+	        line=line.replace(bkmd5+"|", "");
+	        line=line.replace("'", "$");
+	        System.out.println(seqexp+","+bkmd5+","+line+","+serialno);
+	        ps=ipcon.prepareStatement("insert into tbexportbook values('"+seqexp+"','"+bkmd5+"','"+line+"','"+serialno+"')");
+	        ps.execute();
+	        serialno++;
+	        }
+	        PreparedStatement pscheck=metacon.prepareStatement("select * from tbloaddata where jid='"+ebDetails.getJid()+"' and cid='"+ebDetails.getCid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        ResultSet rscheck=pscheck.executeQuery();
+	        while(rscheck.next()){
+	        ps=metacon.prepareStatement("delete from tbloaddata where jid='"+ebDetails.getJid()+"' and cid='"+ebDetails.getCid()+"' and bookno='"+ebDetails.getBookno()+"'");
+	        ps.execute();
+	        }
+	            
+	        ps=metacon.prepareStatement("insert into tbloaddata values('"+ebDetails.getJid()+"','"+ebDetails.getCid()+"','"+ebDetails.getBookno()+"','"+ebDetails.getTalukaid()+"','"+filename+".zip"+"','"+count+"','"+imgcount+"','"+dateFormat1.format(new Date())+"','"+metaUsers.getSelectedItem()+"')");
+	        ps.execute();
+	        
+	        br.close();
+	        Importdb(filename);
+	        }
+	        
+	        
+	        
+	        
+	 }catch(Exception exp)
+	 {
+	 JOptionPane.showMessageDialog(null, "Export Error:"+exp, "NLRM Export Import",JOptionPane.ERROR_MESSAGE);
+	 }
+	 }
+	 
+	 public void Importdb(String filename)
+	{
+	FileReader fr;
+	BufferedReader br;
+	String line="";
+	try{    
+
+	System.out.println("Import Filename:"+filename);    
+	fr=new FileReader(filename);    
+	br=new BufferedReader(fr);
+	line="";
+	int already=0;
+	while((line=br.readLine())!=null)
+	        {  
+	System.out.println("RLine:"+line);            
+	if(line.split("\\|")[1].equalsIgnoreCase("S"))
+	{
+	String cid=line.split("\\|")[2];    
+	String jid=line.split("\\|")[3];        
+	String bookno=line.split("\\|")[4];
+	String talukaid=line.split("\\|")[5];
+	ps=metacon.prepareStatement("select distinct jid from tbjacketm where refjid='"+jid+"' and refcid='"+cid+"'");
+	ResultSet rs=ps.executeQuery();
+	if(rs.next())
+	{
+	newjid=rs.getString(1);
+	already=1;
+	}
+	else{
+	PreparedStatement pspy=metacon.prepareStatement("SELECT nextval('seqjktid')");
+	ResultSet rspy=pspy.executeQuery();
+	while(rspy.next()){
+	newjid=rspy.getString(1);
+	already=0;
+	}
+	    
+	}
+	ps=metacon.prepareStatement("select distinct cid from tbsysparams");
+	rs=ps.executeQuery();
+	if(rs.next())
+	{
+	newcid=rs.getString(1);    
+	}
+	}
+	else if(line.split("\\|")[1].equalsIgnoreCase("D"))
+	{
+	System.out.println("Jid:"+newjid+", Cid:"+newcid);    
+	line=line.split("\\|")[2];
+	if(line.contains("insert into tbjacketm"))
+	{
+	if(already==0)
+	{
+	line=line.replace("NEWJID", newjid).replace("NEWCID", newcid).replaceAll("\\$", "'").replaceAll("##", "\\\\\\\\").replaceAll("#", "\\\\\\\\");
+	System.out.println("Query:"+line);
+	ps=metacon.prepareStatement(line);
+	ps.execute();
+	}
+	}
+	else{
+	line=line.replace("NEWJID", newjid).replace("NEWCID", newcid).replaceAll("\\$", "'").replaceAll("##", "\\\\\\\\").replaceAll("#", "\\\\\\\\");
+	System.out.println("Query:"+line);
+	ps=metacon.prepareStatement(line);
+	ps.execute();
+	}
+	}
+
+	}
+
+	}catch(Exception e)
+	{
+	System.out.println("Error:"+e);
+	}     
+	 }
+	 
+	 
+	 public String formattext(String input)
+	 {
+	   String output=input;
+	   if(input.length()==1)
+	   {
+	   output="00"+input;    
+	   return output;
+	   }
+	   else if(input.length()==2)
+	   {
+	   output="0"+input;    
+	   return output;
+	   }
+	   return output;
+	 }
+	 public String hash(String input)
+	 {
+	 try{    
+	         byte ptext[] = input.getBytes();
+	         String value = new String(ptext, "UTF-8");
+	         MessageDigest m = MessageDigest.getInstance("MD5");
+	         byte[] digest = m.digest(value.getBytes());
+	         String hash = new BigInteger(1, digest).toString(16);
+	         return hash;
+	 }catch(Exception e)
+	 {
+	 JOptionPane.showMessageDialog(null, "Hashgen Error:"+e, "NLRM Export Import",JOptionPane.ERROR_MESSAGE);
+	 return null;
+	 }
+	 }
+	
+	
 }
