@@ -185,6 +185,10 @@ public class DuplicacyCheck implements Runnable {
 						if(matchPer>=mPercentage)
 						{
 							
+							ps=con.prepareStatement("update tbtransactions set status='D' where jid='"+reqCountInfo1.getJid()+"' and bookno='"+reqCountInfo1.getCount()+"'");
+							ps.execute();
+							ps=con.prepareStatement("update tbimagetrans set status='D' where jid='"+reqCountInfo1.getJid()+"' and bookno='"+reqCountInfo1.getCount()+"'");
+							ps.execute();
 							docWriter.write(villageId, docid, reqCountInfo1.getJid(), reqCountInfo1.getBookno(), reqCountInfo1.getCount(), "D", matchPer, "Matched with Jid="+reqCountInfo.getJid()+" and Bookno="+reqCountInfo.getBookno());
 							
 						}
