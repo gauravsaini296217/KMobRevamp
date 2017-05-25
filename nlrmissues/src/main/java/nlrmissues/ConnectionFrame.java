@@ -154,7 +154,7 @@ public class ConnectionFrame extends JFrame {
 				DocDuplicacyWriter docWriter=new DocDuplicacyWriter();
 				
 				
-				ps=con.prepareStatement("select distinct villageid,docid,ofcid from tbimagetrans where villageid='6739' order by villageid,docid,ofcid");
+				ps=con.prepareStatement("select distinct villageid,docid,ofcid from tbimagetrans order by villageid,docid,ofcid");
 				rs=ps.executeQuery();
 				while(rs.next())
 				{
