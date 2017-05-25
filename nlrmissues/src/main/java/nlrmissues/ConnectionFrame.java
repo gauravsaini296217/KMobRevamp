@@ -227,12 +227,20 @@ public class ConnectionFrame extends JFrame {
 					cell=row.createCell(5);
 					cell.setCellValue("status");
 					
+					cell=row.createCell(6);
+					cell.setCellValue("Villageid");
+					
+					cell=row.createCell(7);
+					cell.setCellValue("Docid");
+					
+					cell=row.createCell(8);
+					cell.setCellValue("Imgorgrepository");
 					
 					int r=1;
 					
 					String jid="",bookno="",imgorgname="";
 					
-					ps=con.prepareStatement("select jid,bookno, imgorgname,pageno, filename from tbimagetrans where concat(jid,',',bookno,',',imgorgname) in ( select concat(jid,',',bookno,',',imgorgname) from tbimagetrans group by jid,bookno,imgorgname having count(*)>1 ) order by jid ,bookno,imgorgname, pageno, filename");
+					ps=con.prepareStatement("select jid,bookno, imgorgname,pageno, filename,villageid,docid,imgorgrepository from tbimagetrans where concat(jid,',',bookno,',',imgorgname) in ( select concat(jid,',',bookno,',',imgorgname) from tbimagetrans group by jid,bookno,imgorgname having count(*)>1 ) order by jid ,bookno,imgorgname, pageno, filename");
                     rs=ps.executeQuery();
                     while(rs.next())
                     {
@@ -261,6 +269,15 @@ public class ConnectionFrame extends JFrame {
         					
         					cell=row.createCell(5);
         					cell.setCellValue("F");
+        					
+        					cell=row.createCell(6);
+        					cell.setCellValue(rs.getString(6));
+        					
+        					cell=row.createCell(7);
+        					cell.setCellValue(rs.getString(7));
+        					
+        					cell=row.createCell(8);
+        					cell.setCellValue(rs.getString(8));
                 			
         					r++;
                     		
@@ -299,6 +316,16 @@ public class ConnectionFrame extends JFrame {
             					
             					cell=row.createCell(5);
             					cell.setCellValue("D");
+            					
+            					cell=row.createCell(6);
+            					cell.setCellValue(rs.getString(6));
+            					
+            					cell=row.createCell(7);
+            					cell.setCellValue(rs.getString(7));
+            					
+            					cell=row.createCell(8);
+            					cell.setCellValue(rs.getString(8));
+                    			
                     			
             					r++;
             					
@@ -331,6 +358,15 @@ public class ConnectionFrame extends JFrame {
             					
             					cell=row.createCell(5);
             					cell.setCellValue("F");
+                    			
+            					cell=row.createCell(6);
+            					cell.setCellValue(rs.getString(6));
+            					
+            					cell=row.createCell(7);
+            					cell.setCellValue(rs.getString(7));
+            					
+            					cell=row.createCell(8);
+            					cell.setCellValue(rs.getString(8));
                     			
             					r++;
             					
