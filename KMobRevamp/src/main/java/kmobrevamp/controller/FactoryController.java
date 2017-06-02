@@ -2,7 +2,6 @@ package kmobrevamp.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,35 +18,23 @@ import kmobrevamp.model.User;
 import kmobrevamp.service.UserService;
 
 @Controller
-public class LoginController {
+public class FactoryController {
 
 	@Autowired
 	private UserService userService;
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping("/default")
-    public String defaultAfterLogin(HttpServletRequest request) {
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		List<GrantedAuthority> list=(List<GrantedAuthority>) auth.getAuthorities();
-        if (list.get(0).getAuthority().equalsIgnoreCase("ADMIN")) {
-            return "redirect:/admin/home";
-        }
-        else if (list.get(0).getAuthority().equalsIgnoreCase("Factory")) {
-            return "redirect:/factory/home";
-        }
-        return "redirect:/";
-    }
 	
-	@RequestMapping(value={"/","/login"}, method=RequestMethod.GET)
-	public ModelAndView login()
-	{
-		ModelAndView modelAndView=new ModelAndView();
-		modelAndView.setViewName("login");
+	@RequestMapping(value="/factory/home", method = RequestMethod.GET)
+	public ModelAndView factoryhome(){
+		ModelAndView modelAndView = new ModelAndView();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.findUserByEmail(auth.getName());
+		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
+		modelAndView.setViewName("factory/home");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/admin/registration", method=RequestMethod.GET)
+	@RequestMapping(value="/factory/registration", method=RequestMethod.GET)
 	public ModelAndView registration()
 	{
 		ModelAndView modelAndView=new ModelAndView();
@@ -56,13 +43,13 @@ public class LoginController {
 		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
 		User newUser=new User();
 		modelAndView.addObject("user", newUser);
-		modelAndView.setViewName("admin/registration");
+		modelAndView.setViewName("factory/registration");
 		return modelAndView;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/admin/registration", method=RequestMethod.POST)
+	@RequestMapping(value="/factory/registration", method=RequestMethod.POST)
 	public ModelAndView createNewUser(@Valid User user,BindingResult result)
 	{
 		ModelAndView modelAndView=new ModelAndView();
@@ -78,44 +65,21 @@ public class LoginController {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User user1 = userService.findUserByEmail(auth.getName());
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
-			modelAndView.setViewName("admin/registration");
+			modelAndView.setViewName("factory/registration");
 		}
 		else{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User user1 = userService.findUserByEmail(auth.getName());
 			List<GrantedAuthority> list=(List<GrantedAuthority>) auth.getAuthorities();
-			userService.saveFactoryUser(user);
+			userService.saveServiceCenterUser(user);
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());
-			modelAndView.setViewName("admin/registration");
+			modelAndView.setViewName("factory/registration");
 		}
 		
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/admin/home", method = RequestMethod.GET)
-	public ModelAndView adminhome(){
-		ModelAndView modelAndView = new ModelAndView();
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.findUserByEmail(auth.getName());
-		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
-		modelAndView.setViewName("admin/home");
-		return modelAndView;
-	}
 	
-	
-	@RequestMapping(value="/error", method = RequestMethod.GET)
-	public ModelAndView error(){
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value="/access-denied", method = RequestMethod.GET)
-	public ModelAndView accessdenied(){
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("access-denied");
-		return modelAndView;
-	}
 }

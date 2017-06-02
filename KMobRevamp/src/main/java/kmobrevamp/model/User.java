@@ -27,17 +27,17 @@ public class User {
 	@Column(name="user_id")
 	private int id;
 	
-	@Column(name="email")
+	@Column(name="email",length=60)
 	@Email(message="*Please provide a valid email")
 	@NotEmpty(message="*Please provide an email")
 	private String email;
 	
-	@Column(name="password")
-	@Length(min=5,message="*Your Password must have at least 5 characters")
+	@Column(name="password",length=60)
+	@Length(min=5,max=60,message="*Your Password must have at least 5 characters & at most 60 characters")
 	@NotEmpty(message="*Please provide your password")
 	private String password;
 	
-	@Column(name="name")
+	@Column(name="name",length=60)
 	@NotEmpty(message="*Please provide your name")
 	private String name;
 	

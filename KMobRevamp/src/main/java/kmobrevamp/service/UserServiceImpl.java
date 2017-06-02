@@ -38,14 +38,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.findByEmail(email);
 	}
 
-	public void saveUser(User user) {
+	public void saveFactoryUser(User user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		user.setActive(true);
-		Role role=roleRepository.findByRole("ADMIN");
+		Role role=roleRepository.findByRole("Factory");
 		user.setRoles(new HashSet<Role>(Arrays.asList(role)));
         userRepository.save(user);
 	}
 
+	public void saveServiceCenterUser(User user) {
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		user.setActive(true);
+		Role role=roleRepository.findByRole("ServiceCenter");
+		user.setRoles(new HashSet<Role>(Arrays.asList(role)));
+        userRepository.save(user);
+	}
+	
+	public void saveSupportCenterUser(User user) {
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		user.setActive(true);
+		Role role=roleRepository.findByRole("SupportCenter");
+		user.setRoles(new HashSet<Role>(Arrays.asList(role)));
+        userRepository.save(user);
+	}
+	
 	@Transactional
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 		User user=userRepository.findByEmail(userName);

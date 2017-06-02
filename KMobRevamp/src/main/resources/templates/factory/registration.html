@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>KMobRevamp Registration</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" />
+	<link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+ 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="header">
+	     <h2>KMobRevamp <span class="label label-info badgefont">[Customer Relationship Interface]</span></h2>
+	</div>
+	<div class="container font">
+		 		<div class="panel-group" style="margin-top:40px">
+ 			<div class="panel panel-primary">
+ 				<div class="panel-heading nav navbar-default">
+ 				  <div class="row" style="color:white">  
+ 				    <div class="col-xs-3">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li><a href="/factory/home" class="" style="color:white">Home</a>
+                            </li>
+                            <li class="active"><a href="/factory/registration" class="" style="color:white">Registration</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-5">
+                    </div>
+                    <div class="col-xs-4">
+                       <ul class="nav navbar-nav navbar-right">
+                            <li><span th:utext="${userName}"></span></li>
+                            <li><a href="/logout" class="btn btn-danger" style="color:white;padding:2px;margin-left:8px">Logout</a></li>
+                       </ul>     
+                    </div>
+ 				  </div>	   
+ 				</div>
+ 				<div class="panel-body">
+ 					 <div class="col-md-6 col-md-offset-3">
+ 					 <div class="login-panel panel panel-primary ppanel">
+                        <div class="panel-heading">
+                           <h3 class="panel-title">Registration</h3>
+                        </div>
+                        <div class="panel-body">
+                        <form autocomplete="off" action="#" th:action="@{/factory/registration}"
+					           th:object="${user}" method="post" class="form-horizontal"
+					           role="form">
+					        <div class="form-group">
+						        <div class="col-sm-9">
+						            <input type="text" th:field="*{name}" placeholder="Name"
+								           class="form-control" /> 
+						            <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+								           class="validation-message"></label>
+								
+						        </div>
+					        </div>
+
+					        <div class="form-group">
+						        <div class="col-sm-9">
+							        <input type="text" th:field="*{email}" placeholder="Email"
+								           class="form-control" />
+								    <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+								           class="validation-message"></label>
+						        </div>
+					        </div>
+					        
+					        <div class="form-group">
+						        <div class="col-sm-9">
+							        <input type="password" th:field="*{password}"
+								           placeholder="Password" class="form-control" />
+								    <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+								           class="validation-message"></label>
+						        </div>
+					        </div> 
+							
+					        <div class="form-group">
+						        <div class="col-sm-9">
+							        <button type="submit" class="btn btn-primary btn-block">Register User</button>
+						        </div>
+					        </div>
+					
+					          <span th:utext="${successMessage}"></span>
+					 </form>
+ 					 
+                            
+                        </div>
+ 					 </div>
+ 					 					 
+ 				</div>
+ 				
+ 			</div>
+ 		</div>
+	</div>
+  </div>
+</body>
+</html>			
+								

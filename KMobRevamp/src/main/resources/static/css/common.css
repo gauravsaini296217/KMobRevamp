@@ -1,0 +1,50 @@
+.header {
+	
+	background-color: MidnightBlue;
+	/* top right bottom left */
+	margin: 0px 0px 0px 0px;
+	height:65px;
+	position: relative;
+	width:100%;
+	
+}
+
+div h2{
+      background:MidnightBlue;
+      color:#fff;
+      display:block;
+      font-weight:bold;
+      padding:20px;
+      margin:0px;
+      font-family: 'Oswald', sans-serif;
+    }
+    
+.font {
+	
+	font-family: 'Oswald', sans-serif;
+}    
+
+div span.badgefont{
+	
+	font-size: 14px;
+}
+
+
+.footer {
+	
+  position: fixed;
+  right: 0px;
+  bottom: -1.5%;
+  left: 0px;
+  padding: 4px;
+  background-color: MidnightBlue;
+  text-align: center;
+  color:white;
+	
+}
+
+
+.vspace{
+	
+	margin: 5px 0px 0px 0px;
+}
