@@ -71,5 +71,12 @@ public class Factory {
 		this.serviceCenters = serviceCenters;
 	}
 
+	@Override
+	public String toString() {
+		return "Factory [id=" + id + ", name=" + name + ", address=" + address + ", serviceCenters=" + serviceCenters
+				+ "]";
+	}
+
+    
 	
 }

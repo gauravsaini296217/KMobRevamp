@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import kmobrevamp.model.Factory;
 import kmobrevamp.model.User;
 import kmobrevamp.service.UserService;
 
@@ -36,7 +37,13 @@ public class LoginController {
         else if (list.get(0).getAuthority().equalsIgnoreCase("Factory")) {
             return "redirect:/factory/home";
         }
-        return "redirect:/";
+        else if (list.get(0).getAuthority().equalsIgnoreCase("ServiceCenter")) {
+            return "redirect:/service/home";
+        }
+        else if (list.get(0).getAuthority().equalsIgnoreCase("SupportCenter")) {
+            return "redirect:/support/home";
+        }
+        return "redirect:/login";
     }
 	
 	@RequestMapping(value={"/","/login"}, method=RequestMethod.GET)
@@ -53,6 +60,8 @@ public class LoginController {
 		ModelAndView modelAndView=new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
+		List<Factory> factoryList=userService.getFactories();
+		modelAndView.addObject("factories",factoryList);
 		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
 		User newUser=new User();
 		modelAndView.addObject("user", newUser);
@@ -75,6 +84,8 @@ public class LoginController {
 		
 		if(result.hasErrors())
 		{
+			List<Factory> factoryList=userService.getFactories();
+			modelAndView.addObject("factories",factoryList);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User user1 = userService.findUserByEmail(auth.getName());
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
@@ -85,6 +96,8 @@ public class LoginController {
 			User user1 = userService.findUserByEmail(auth.getName());
 			List<GrantedAuthority> list=(List<GrantedAuthority>) auth.getAuthorities();
 			userService.saveFactoryUser(user);
+			List<Factory> factoryList=userService.getFactories();
+			modelAndView.addObject("factories",factoryList);
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());

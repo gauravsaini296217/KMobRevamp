@@ -17,9 +17,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kmobrevamp.model.Factory;
 import kmobrevamp.model.Role;
+import kmobrevamp.model.ServiceCenter;
 import kmobrevamp.model.User;
+import kmobrevamp.repository.FactoryRepository;
 import kmobrevamp.repository.RoleRepository;
+import kmobrevamp.repository.ServiceCenterRepository;
 import kmobrevamp.repository.UserRepository;
 
 @Service("userService")
@@ -33,6 +37,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	private FactoryRepository factoryRepository;
+	
+	@Autowired
+	private ServiceCenterRepository serviceRepository;
 	
 	public User findUserByEmail(String email) {
 		return userRepository.findByEmail(email);
@@ -62,6 +72,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
 	}
 	
+	
+	
 	@Transactional
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 		User user=userRepository.findByEmail(userName);
@@ -85,5 +97,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.isActive() , true, true, true, authorities);
 	}
+
+	public List<Factory> getFactories() {
+		
+		return factoryRepository.findAll();
+	
+		
+	}
+
+	public Factory getFactoryById(int id) {
+		return factoryRepository.findById(id);
+	}
+
+	public List<ServiceCenter> getServices() {
+		return serviceRepository.findAll();
+	}
+
+	public ServiceCenter getServiceById(int id) {
+		
+		return serviceRepository.findById(id);
+	}
+
+	
+	
 	
 }

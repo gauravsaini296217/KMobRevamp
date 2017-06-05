@@ -70,6 +70,12 @@ public class ServiceCenter {
 	public void setSupportCenters(Set<SupportCenter> supportCenters) {
 		this.supportCenters = supportCenters;
 	}
+
+	@Override
+	public String toString() {
+		return "ServiceCenter [id=" + id + ", servicecentername=" + servicecentername + ", address=" + address
+				+ ", supportCenters=" + supportCenters + "]";
+	}
 	
 	
 	

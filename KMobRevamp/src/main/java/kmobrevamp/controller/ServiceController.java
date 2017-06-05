@@ -1,6 +1,5 @@
 package kmobrevamp.controller;
 
-import java.security.Provider.Service;
 import java.util.List;
 import java.util.Set;
 
@@ -16,46 +15,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import kmobrevamp.model.Factory;
-import kmobrevamp.model.ServiceCenter;
+import kmobrevamp.model.SupportCenter;
 import kmobrevamp.model.User;
 import kmobrevamp.service.UserService;
 
 @Controller
-public class FactoryController {
+public class ServiceController {
 
 	@Autowired
 	private UserService userService;
 	
 	
-	@RequestMapping(value="/factory/home", method = RequestMethod.GET)
+	@RequestMapping(value="/service/home", method = RequestMethod.GET)
 	public ModelAndView factoryhome(){
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
 		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
-		modelAndView.setViewName("factory/home");
+		modelAndView.setViewName("service/home");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/factory/registration", method=RequestMethod.GET)
+	@RequestMapping(value="/service/registration", method=RequestMethod.GET)
 	public ModelAndView registration()
 	{
 		ModelAndView modelAndView=new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
 		modelAndView.addObject("userName", "Welcome " + user.getName() + " (" + user.getEmail() + ")");
-		Set<ServiceCenter> serviceList=userService.getFactoryById(user.getLocation()).getServiceCenters();
-		modelAndView.addObject("services",serviceList);
+		Set<SupportCenter> supportList=userService.getServiceById(user.getLocation()).getSupportCenters();
+		modelAndView.addObject("supports",supportList);
 		User newUser=new User();
 		modelAndView.addObject("user", newUser);
-		modelAndView.setViewName("factory/registration");
+		modelAndView.setViewName("service/registration");
 		return modelAndView;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/factory/registration", method=RequestMethod.POST)
+	@RequestMapping(value="/service/registration", method=RequestMethod.POST)
 	public ModelAndView createNewUser(@Valid User user,BindingResult result)
 	{
 		ModelAndView modelAndView=new ModelAndView();
@@ -70,22 +68,22 @@ public class FactoryController {
 		{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User user1 = userService.findUserByEmail(auth.getName());
-			Set<ServiceCenter> serviceList=userService.getFactoryById(user1.getLocation()).getServiceCenters();
-			modelAndView.addObject("services",serviceList);
+			Set<SupportCenter> supportList=userService.getServiceById(user1.getLocation()).getSupportCenters();
+			modelAndView.addObject("supports",supportList);
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
-			modelAndView.setViewName("factory/registration");
+			modelAndView.setViewName("service/registration");
 		}
 		else{
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			User user1 = userService.findUserByEmail(auth.getName());
 			List<GrantedAuthority> list=(List<GrantedAuthority>) auth.getAuthorities();
-			userService.saveServiceCenterUser(user);
-			Set<ServiceCenter> serviceList=userService.getFactoryById(user1.getLocation()).getServiceCenters();
-			modelAndView.addObject("services",serviceList);
+			userService.saveSupportCenterUser(user);
+			Set<SupportCenter> supportList=userService.getServiceById(user1.getLocation()).getSupportCenters();
+			modelAndView.addObject("supports",supportList);
 			modelAndView.addObject("userName", "Welcome " + user1.getName() + " (" + user1.getEmail() + ")");
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());
-			modelAndView.setViewName("factory/registration");
+			modelAndView.setViewName("service/registration");
 		}
 		
 		return modelAndView;

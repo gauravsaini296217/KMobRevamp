@@ -23,7 +23,7 @@
  				  <div class="row" style="color:white">  
  				    <div class="col-xs-3">
                         <ul class="nav navbar-nav navbar-left">
-                            <li class="active"><a href="@{/factory/home}" class="" style="color:white">Home</a>
+                            <li class="active"><a th:href="@{/factory/home}" class="" style="color:white">Home</a>
                             </li>
                             <li><a th:href="@{/factory/registration}" class="" style="color:white">Registration</a>
                             </li>
@@ -34,7 +34,7 @@
                     <div class="col-xs-4">
                        <ul class="nav navbar-nav navbar-right">
                             <li><span th:utext="${userName}"></span></li>
-                            <li><a href="/logout" class="btn btn-danger" style="color:white;padding:2px;margin-left:8px">Logout</a></li>
+                            <li><a th:href="@{/logout}" class="btn btn-danger" style="color:white;padding:2px;margin-left:8px">Logout</a></li>
                        </ul>     
                     </div>
  				  </div>	   

@@ -48,6 +48,9 @@ public class User {
 	@JoinTable(name="KMR_user_role", joinColumns= @JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id") )
 	private Set<Role> roles;
 
+	@Column(name="location")
+	private int location;
+	
 	public int getId() {
 		return id;
 	}
@@ -95,6 +98,14 @@ public class User {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public int getLocation() {
+		return location;
+	}
+
+	public void setLocation(int location) {
+		this.location = location;
 	}
 	
 	

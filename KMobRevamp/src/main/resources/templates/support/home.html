@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+ <html xmlns="http://www.w3.org/1999/xhtml"
+ 	xmlns:th="http://www.thymeleaf.org">
+ 
+ <head>
+ <title>KMobRevamp Support</title>
+ <link rel="stylesheet" type="text/css" th:href="@{/css/adminhome.css}" />
+ <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}" />
+ <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ </head>
+ 
+ <body>
+    <div class="header">
+	     <h2>KMobRevamp <span class="label label-info badgefont">[Customer Relationship Interface]</span></h2>
+	</div>
+ 	<div class="container font">
+ 		<div class="panel-group" style="margin-top:40px">
+ 			<div class="panel panel-primary">
+ 				<div class="panel-heading nav navbar-default">
+ 				  <div class="row" style="color:white">  
+ 				    <div class="col-xs-3">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li class="active"><a th:href="@{/support/home}" class="" style="color:white">Home</a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                    <div class="col-xs-5">
+                    </div>
+                    <div class="col-xs-4">
+                       <ul class="nav navbar-nav navbar-right">
+                            <li><span th:utext="${userName}"></span></li>
+                            <li><a th:href="@{/logout}" class="btn btn-danger" style="color:white;padding:2px;margin-left:8px">Logout</a></li>
+                       </ul>     
+                    </div>
+ 				  </div>	   
+ 				</div>
+ 				<div class="panel-body">
+ 					 
+ 					 <form autocomplete="off" action="#" th:action="@{/service/registration}" th:object="${complaint}" method="post" class="form-horizontal" role="form">
+					       <div class="container font">
+					         <div class="row">
+					            <div class="col-xs-4">
+					            <img th:src="@{/images/Forstar.PNG}"/>
+					            </div>
+					            <div class="col-xs-4"></div>
+					            <div class="col-xs-4">
+					            <table border="1">
+					            <tr>
+					               <td style="padding:3px"></td>
+					               <td style="padding:3px"><h5>Date & Time[DD-MM-YYYY HH:mm]</h5></td>
+					            </tr>
+					            <tr>
+					               <td style="padding:3px">IN</td>
+					               <td style="padding:3px">
+					               <input type="text" th:field="*{indate}" placeholder="DD-MM-YYYY HH:mm"
+								           class="form-control" /> 
+						            <label th:if="${#fields.hasErrors('indate')}" th:errors="*{indate}"
+								           class="validation-message"></label>
+								   </td>
+					               
+					            </tr>
+					            <tr>
+					               <td style="padding:3px">Regn.</td>
+					               <td style="padding:3px">
+					               <input type="text" th:field="*{regndate}" placeholder="DD-MM-YYYY HH:mm"
+								           class="form-control" /> 
+						            <label th:if="${#fields.hasErrors('regndate')}" th:errors="*{regndate}"
+								           class="validation-message"></label>
+								   </td>
+					               
+					            </tr>
+					            </table>
+					            </div>
+					         </div>
+					         <br/>
+					         <div class="row">
+					               <div class="col-xs-2">
+					                  <input type="text" th:field="*{workorderno}" placeholder="Work Order No........"
+								           class="form-control" /> 
+						              <label th:if="${#fields.hasErrors('workorderno')}" th:errors="*{workorderno}"
+								           class="validation-message"></label>
+								   </div>
+								   <div class="col-xs-1"></div>
+								   <div class="col-xs-2">
+					                  <input type="text" th:field="*{date}" placeholder="Date[DD-MM-YYYY]...."
+								           class="form-control" /> 
+						              <label th:if="${#fields.hasErrors('date')}" th:errors="*{date}"
+								           class="validation-message"></label>
+								   </div>
+								   <div class="col-xs-1"></div>
+								   <div class="col-xs-2">
+					                  <input type="text" th:field="*{tokenno}" placeholder="Token No............"
+								           class="form-control" /> 
+						              <label th:if="${#fields.hasErrors('tokenno')}" th:errors="*{tokenno}"
+								           class="validation-message"></label>
+								   </div>
+								   <div class="col-xs-1"></div>
+								   <div class="col-xs-2">
+					                  <input type="text" th:field="*{claimno}" placeholder="Claim No............"
+								           class="form-control" /> 
+						              <label th:if="${#fields.hasErrors('claimno')}" th:errors="*{claimno}"
+								           class="validation-message"></label>
+								   </div>
+								   <div class="col-xs-1"></div>
+					         </div>
+					         <br/>
+					         <div class="row">
+					            <div class="col-xs-4">
+					            
+					            </div>
+					         </div>
+					       
+					       </div>
+ 					 </form>
+ 					 
+ 				</div>
+ 				
+ 			</div>
+ 		</div>
+ 		
+ 	</div>
+ 	<div style="clear:both">
+	<p class="footer">Copyright © 2017 [KDMSL] All Rights Reserved</p>
+	</div>
+ </body>
+ </html>

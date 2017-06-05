@@ -21,9 +21,9 @@
  				  <div class="row" style="color:white">  
  				    <div class="col-xs-3">
                         <ul class="nav navbar-nav navbar-left">
-                            <li><a th:href="@{/factory/home}" class="" style="color:white">Home</a>
+                            <li><a th:href="@{/service/home}" class="" style="color:white">Home</a>
                             </li>
-                            <li class="active"><a th:href="@{/factory/registration}" class="" style="color:white">Registration</a>
+                            <li class="active"><a th:href="@{/service/registration}" class="" style="color:white">Registration</a>
                             </li>
                         </ul>
                     </div>
@@ -44,7 +44,7 @@
                            <h3 class="panel-title">Registration</h3>
                         </div>
                         <div class="panel-body">
-                        <form autocomplete="off" action="#" th:action="@{/factory/registration}"
+                        <form autocomplete="off" action="#" th:action="@{/service/registration}"
 					           th:object="${user}" method="post" class="form-horizontal"
 					           role="form">
 					        <div class="form-group">
@@ -77,8 +77,8 @@
 							
 							<div class="form-group">
 					            <div class="col-sm-9">
-					               <select class="form-control" th:field="*{location}"  id="dropService">
-                                       <option th:each="service : ${services}" th:value="${service.id}" th:text="${service.servicecentername}"></option>
+					               <select class="form-control" th:field="*{location}"  id="dropSupport">
+                                       <option th:each="support : ${supports}" th:value="${support.id}" th:text="${support.supportcentername}"></option>
                                    </select>
 					            </div>
 					        </div>
